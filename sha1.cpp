@@ -1,6 +1,21 @@
 #include <string.h>
-#include <avr/io.h>
-#include <avr/pgmspace.h>
+#if defined(__SAM3X8E__)
+    #define PROGMEM
+    #define pgm_read_byte(x)        (*((char *)x))
+    #define pgm_read_word(x)        ( ((*((unsigned char *)x + 1)) << 8) + (*((unsigned char *)x)))
+    #define pgm_read_byte_near(x)   (*((char *)x))
+    #define pgm_read_byte_far(x)    (*((char *)x))
+    #define pgm_read_word_near(x)   ( ((*((unsigned char *)x + 1)) << 8) + (*((unsigned char *)x)))
+    #define pgm_read_word_far(x)    ( ((*((unsigned char *)x + 1)) << 8) + (*((unsigned char *)x))))
+    #define PSTR(x)  x
+  #if defined F
+    #undef F
+  #endif
+  #define F(X) (X)
+#else
+    #include <avr/io.h>
+    #include <avr/pgmspace.h>
+#endif
 #include "sha1.h"
 
 #define SHA1_K0 0x5a827999
@@ -8,7 +23,7 @@
 #define SHA1_K40 0x8f1bbcdc
 #define SHA1_K60 0xca62c1d6
 
-uint8_t sha1InitState[] PROGMEM = {
+const uint8_t sha1InitState[] PROGMEM = {
   0x01,0x23,0x45,0x67, // H0
   0x89,0xab,0xcd,0xef, // H1
   0xfe,0xdc,0xba,0x98, // H2
